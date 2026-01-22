@@ -28,14 +28,6 @@ namespace OrderInShop
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
 
-            if (WareHouseD.ContainsKey(name))
-            {
-                WareHouseD.Remove(name);
-                Console.WriteLine($"Товар \"{name}\" удалён.");
-            }
-            else
-                throw new ArgumentException("Данного товара нет на складе");
-
             if (WareHouseD.TryGetValue(name, out (Product product, int count) value))
             {
                 if (value.count - count < 0)
