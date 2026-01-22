@@ -15,26 +15,15 @@ namespace OrderInShop
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
 
-            if (WareHouseD.ContainsKey(name))
+            if (WareHouseD.TryGetValue(name, out(Product product, int count) value))
             {
-                throw new ArgumentException("Данный продукт уже есть на складе");
+                WareHouseD[name] = (value.product, value.count + count);
             }
             else
                 WareHouseD.Add(name, (product, count));
         }
 
-        public void RemoveProduct(string name)
-        {
-            if (WareHouseD.ContainsKey(name))
-            {
-                WareHouseD.Remove(name);
-                Console.WriteLine($"Товар \"{name}\" удалён.");
-            }
-            else
-                throw new ArgumentException("Данного товара нет на складе");
-        }
-
-        public void RemoveProductCount(string name, int count)
+        public void RemoveProduct(string name, int count)
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
@@ -46,6 +35,21 @@ namespace OrderInShop
             }
             else
                 throw new ArgumentException("Данного товара нет на складе");
+
+            if (WareHouseD.TryGetValue(name, out (Product product, int count) value))
+            {
+                if (value.count - count < 0)
+                    throw new ArgumentException("На складе нет такого количества продуктов");
+                if (value.count - count == 0)
+                {
+                    WareHouseD.Remove(name);
+                    Console.WriteLine($"Продукт \"{name}\" закончился");
+                }
+                else
+                    WareHouseD[name] = (value.product, value.count - count);
+            }
+            else
+                throw new ArgumentException("Товара не существует");
         }
 
         Dictionary<string, (Product, int)> WareHouseD = new();
