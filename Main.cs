@@ -8,9 +8,9 @@ Product grape = new Product("Виногдар", 13);
 
 
 WareHouse wareHouse = new();
-wareHouse.AddProduct("Банан", banana, 100);
-wareHouse.AddProduct("Груша", pear, 50);
-wareHouse.AddProduct("Виногдар", grape, 13);
+wareHouse.AddProduct( banana, 100);
+wareHouse.AddProduct( pear, 50);
+wareHouse.AddProduct( grape, 13);
 
 wareHouse.Print();
 

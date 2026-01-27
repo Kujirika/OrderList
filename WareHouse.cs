@@ -34,7 +34,6 @@ namespace OrderInShop
                 if (value.count - count == 0)
                 {
                     WareHouseD.Remove(name);
-                    Console.WriteLine($"Продукт \"{name}\" закончился, удаление со склада");
                 }
                 else
                     WareHouseD[name] = (value.product, value.count - count);

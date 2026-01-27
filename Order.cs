@@ -52,7 +52,6 @@ namespace OrderInShop
                 if (value.count - 1 <= 0)
                 {
                     OrderList.Remove(name);
-                    Console.WriteLine($"Удаление {name} из корзины");
                 }
                 else
                     OrderList[name] = (value.product, value.count - 1);
@@ -69,7 +68,6 @@ namespace OrderInShop
                 if (count == 0)
                 {
                     OrderList.Remove(name);
-                    Console.WriteLine($"Удаление товара {name}");
                 }
                 OrderList[name] = (value.product, count);
             }
