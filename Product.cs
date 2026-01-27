@@ -10,6 +10,11 @@ namespace OrderInShop
     {
         private string _name;
         private int _cost;
+
+        public string Name
+        {
+            get { return _name; }
+        }
         public int Cost
         {
             get { return _cost; }

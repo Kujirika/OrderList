@@ -9,19 +9,17 @@ namespace OrderInShop
 {
     internal class WareHouse
     {
-        public void AddProduct(string name ,Product product, int count)
+        public void AddProduct(Product product, int count)
         {
-            if (String.IsNullOrEmpty(name) || name.Length < 2) 
-                throw new ArgumentException("Некорректное название");
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
 
-            if (WareHouseD.TryGetValue(name, out(Product product, int count) value))
+            if (WareHouseD.TryGetValue(product.Name, out(Product product, int count) value))
             {
-                WareHouseD[name] = (value.product, value.count + count);
+                WareHouseD[product.Name] = (value.product, value.count + count);
             }
             else
-                WareHouseD.Add(name, (product, count));
+                WareHouseD.Add(product.Name, (product, count));
         }
 
         public void RemoveProduct(string name, int count)
