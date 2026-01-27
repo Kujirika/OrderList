@@ -42,21 +42,10 @@ namespace OrderInShop
                 throw new ArgumentException("Товара не существует");
         }
 
-        public bool HasProduct(string name, int count)
+        public bool HasProduct(Product product)
         {
-            if (String.IsNullOrEmpty(name) || name.Length < 2)
-                throw new ArgumentException("Некорректное название");
-            if (count < 0)
-                throw new ArgumentException("Количество не может быть отрицательным");
-
-
-            if (WareHouseD.TryGetValue(name, out (Product product, int count) value))
-            {
-                if (WareHouseD.ContainsKey(name) && value.count - count >= 0)
-                    return true;
-                else
-                    return false;
-            }
+            if (WareHouseD.ContainsKey(product.Name))
+                return true;
             else
                 return false; //Товара нет на складе
         }
