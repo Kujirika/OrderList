@@ -76,5 +76,13 @@ namespace OrderInShop
             else
                 throw new ArgumentException("Товара не существует");
         }
+
+        public void Print()
+        {
+            foreach (var product in OrderList)
+            {
+                Console.WriteLine(product);
+            }
+        }
     }
 }
