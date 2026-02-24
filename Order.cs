@@ -8,7 +8,13 @@ namespace OrderInShop
 {
     internal class Order
     {
-        Dictionary<string, (Product, int)> OrderList = new();
+        private Dictionary<string, (Product, int)> _orderList = new();
+        private WareHouse _wareHouse;
+
+        public Order(WareHouse wareHouse)
+        {
+            _wareHouse = wareHouse; // Принимаем ссылку на склад, чтобы использовать методы класса WareHouse
+        }
         public void AddProduct(string name, Product product, int count)
         {
             if (String.IsNullOrEmpty(name) || name.Length < 2)
@@ -16,18 +22,18 @@ namespace OrderInShop
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
 
-            if (OrderList.ContainsKey(name))
+            if (_orderList.ContainsKey(name))
             {
-                OrderList[name] = (product, count);
+                _orderList[name] = (product, count);
             }
             else
-                OrderList.Add(name, (product, count));
+                _orderList.Add(name, (product, count));
         }
         public void Amount()
         {
             int sum = 0;
 
-            foreach (var item in OrderList)
+            foreach (var item in _orderList)
             {
                 Product product = item.Value.Item1;
                 int count = item.Value.Item2;
@@ -36,48 +42,40 @@ namespace OrderInShop
 
             Console.WriteLine($"С вас: {sum}р.");
         }
-        public void AddCount(string name)
+        public void AddCount(Product product)
         {
-            if (OrderList.TryGetValue(name, out (Product product, int count) value))
-            {
-                OrderList[name] = (value.product, value.count + 1);
-            }
-            else
-                throw new ArgumentException("Товара не существует");
+            SetCount(product, 1);
         }
-        public void RemoveCount(string name)
+        public void RemoveCount(Product product)
         {
-            if (OrderList.TryGetValue(name, out (Product product, int count) value))
-            {
-                if (value.count - 1 <= 0)
-                {
-                    OrderList.Remove(name);
-                }
-                else
-                    OrderList[name] = (value.product, value.count - 1);
-            }
-            else
-                throw new ArgumentException("Товара не существует");
+            SetCount(product, 1/*-1*/); // -1 Вызывает исключение.
         }
-        public void SetCount(string name, int count)
+        public void SetCount(Product product, int count)
         {
             if (count < 0)
-                throw new ArgumentException("Количество должно быть больше 0");
-            if (OrderList.TryGetValue(name, out (Product product, int count) value))
+                throw new ArgumentException("Количество не может быть отрицательным");
+            if (_orderList.TryGetValue(product.Name, out (Product product, int count) value)) //Проверка на наличие товара в корзине.
             {
                 if (count == 0)
                 {
-                    OrderList.Remove(name);
+                    _orderList.Remove(product.Name); //Удаление товара из списка корзины, если кол-во товара = 0.
                 }
-                OrderList[name] = (value.product, count);
+                else
+                {
+                    if (_wareHouse.ReserveProduct(product, count, out int reservedCount)) //Проверка на возможность зарезервировать товар на складе.
+                    {
+                        _orderList[product.Name] = (value.product, count); //Изменение кол-ва товара в корзине.
+                    }
+                    // else недостаточное кол-во на складе
+                }    
             }
             else
-                throw new ArgumentException("Товара не существует");
+                throw new ArgumentException("Товара не существует в корзине");
         }
 
         public void Print()
         {
-            foreach (var product in OrderList)
+            foreach (var product in _orderList)
             {
                 Console.WriteLine(product);
             }

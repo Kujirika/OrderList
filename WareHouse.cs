@@ -50,6 +50,29 @@ namespace OrderInShop
                 return false; //Товара нет на складе
         }
 
+        public bool ReserveProduct(Product product, int count, out int reservedCount)
+        {
+            if (WareHouseD.TryGetValue(product.Name, out (Product, int) value))
+            {
+                if (value.Item2 - count >= 0)
+                {
+                    WareHouseD[product.Name] = (value.Item1, value.Item2 - count);
+                    reservedCount = count;
+                    return true;
+                }
+                else
+                {
+                    reservedCount = 0;
+                    return false;
+                }
+            }
+            else
+            {
+                reservedCount = 0;
+                return false;
+            }
+        }
+
         public void Print()
         {
             foreach (var product in WareHouseD)

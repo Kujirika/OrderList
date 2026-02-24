@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OrderInShop
+namespace OrderInShop //Поменять, создание автоматически при добавлении продукта на склад.
 {
     internal class Product
     {
