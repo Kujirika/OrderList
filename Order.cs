@@ -15,6 +15,7 @@ namespace OrderInShop
         {
             _wareHouse = wareHouse; // Принимаем ссылку на склад, чтобы использовать методы класса WareHouse
         }
+
         public void AddProduct(string name, Product product, int count)
         {
             if (String.IsNullOrEmpty(name) || name.Length < 2)
@@ -29,6 +30,7 @@ namespace OrderInShop
             else
                 _orderList.Add(name, (product, count));
         }
+
         public void Amount()
         {
             int sum = 0;
@@ -42,23 +44,26 @@ namespace OrderInShop
 
             Console.WriteLine($"С вас: {sum}р.");
         }
+
         public void AddCount(Product product)
         {
             SetCount(product, 1);
         }
+
         public void RemoveCount(Product product)
         {
             SetCount(product, 1/*-1*/); // -1 Вызывает исключение.
         }
+
         public void SetCount(Product product, int count)
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
             if (_orderList.TryGetValue(product.Name, out (Product product, int count) value)) //Проверка на наличие товара в корзине.
             {
-                if (count == 0)
+                if (count == 0)//Удаление товара из списка корзины, если кол-во товара = 0.
                 {
-                    _orderList.Remove(product.Name); //Удаление товара из списка корзины, если кол-во товара = 0.
+                    _orderList.Remove(product.Name); 
                 }
                 else
                 {

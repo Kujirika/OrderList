@@ -52,11 +52,11 @@ namespace OrderInShop
 
         public bool ReserveProduct(Product product, int count, out int reservedCount)
         {
-            if (WareHouseD.TryGetValue(product.Name, out (Product, int) value))
+            if (WareHouseD.TryGetValue(product.Name, out (Product product, int count) value))
             {
-                if (value.Item2 - count >= 0)
+                if (value.count >= count)
                 {
-                    WareHouseD[product.Name] = (value.Item1, value.Item2 - count);
+                    //WareHouseD[product.Name] = (value.product, value.count - count); // Резервируем товар (но думаю такое стоит делать во время оплаты товара)
                     reservedCount = count;
                     return true;
                 }
@@ -67,10 +67,7 @@ namespace OrderInShop
                 }
             }
             else
-            {
-                reservedCount = 0;
-                return false;
-            }
+                throw new ArgumentException("Товара не существует");
         }
 
         public void Print()
