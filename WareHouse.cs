@@ -50,21 +50,14 @@ namespace OrderInShop
                 return false; //Товара нет на складе
         }
 
-        public bool ReserveProduct(Product product, int count, out int reservedCount)
+        public bool HasEnoughProduct(Product product, int count)
         {
             if (WareHouseD.TryGetValue(product.Name, out (Product product, int count) value))
             {
                 if (value.count >= count)
-                {
-                    //WareHouseD[product.Name] = (value.product, value.count - count); // Резервируем товар (но думаю такое стоит делать во время оплаты товара)
-                    reservedCount = count;
                     return true;
-                }
                 else
-                {
-                    reservedCount = 0;
                     return false;
-                }
             }
             else
                 throw new ArgumentException("Товара не существует");
