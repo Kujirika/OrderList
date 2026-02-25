@@ -15,3 +15,7 @@ Viktor.RemoveCount(banana);
 Viktor.Print();
 Viktor.SetCount(banana, 0);
 Viktor.Print();
+Viktor.SetCount(banana, 1);
+Viktor.Print();
+Viktor.RemoveCount(banana);
+Viktor.Print();
