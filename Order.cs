@@ -45,12 +45,16 @@ namespace OrderInShop
             Console.WriteLine($"С вас: {sum}р.");
         }
 
-        public void AddCount(Product product)
-        {
-            SetCount(product, 1);
+        public void AddCount(Product product) // В теории метод доступен только при наличии товара в коризне, а иначе он скрыт для пользователя,
+        {                                     // так что проверка на наличие товара в коризине не требуется
+            if (_wareHouse.HasEnoughProduct(product, 1, out int reservedCount)) // Проверка на наличие нужного кол-ва на складе
+            {
+                _orderList[product.Name] = (value.product, count); // Изменение кол-ва товара в корзине.
+            }
+            // else недостаточное кол-во на складе
         }
 
-        public void RemoveCount(Product product)
+        public void RemoveCount(Product product)// В теории метод доступен только при наличии товара в коризне, а иначе он скрыт для пользователя, так что проверки не нужны
         {
             SetCount(product, 1/*-1*/); // -1 Вызывает исключение.
         }
@@ -59,17 +63,17 @@ namespace OrderInShop
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
-            if (_orderList.TryGetValue(product.Name, out (Product product, int count) value)) //Проверка на наличие товара в корзине.
+            if (_orderList.TryGetValue(product.Name, out (Product product, int count) value)) // Проверка на наличие товара в корзине.
             {
-                if (count == 0)//Удаление товара из списка корзины, если кол-во товара = 0.
+                if (count == 0)// Удаление товара из списка корзины, если кол-во товара = 0.
                 {
                     _orderList.Remove(product.Name); 
                 }
                 else
                 {
-                    if (_wareHouse.ReserveProduct(product, count, out int reservedCount)) //Проверка на возможность зарезервировать товар на складе.
+                    if (_wareHouse.HasEnoughProduct(product, count, out int reservedCount)) // Проверка на наличие нужного кол-ва на складе
                     {
-                        _orderList[product.Name] = (value.product, count); //Изменение кол-ва товара в корзине.
+                        _orderList[product.Name] = (value.product, count); // Изменение кол-ва товара в корзине.
                     }
                     // else недостаточное кол-во на складе
                 }    
