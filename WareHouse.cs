@@ -55,16 +55,11 @@ namespace OrderInShop
             if (WareHouseD.TryGetValue(product.Name, out (Product product, int count) value))
             {
                 if (value.count >= count)
-                {
                     сountProduct = count;
-                    return true;
-                }
                 else
-                {
                     //Вывод сообщения, что продуктов недостаточно и выдаем максимально доступное число.
                     сountProduct = value.count;
-                    return false;
-                }
+                return true;
             }
             else
                 throw new ArgumentException("Товара не существует");
@@ -72,6 +67,7 @@ namespace OrderInShop
 
         public void Print()
         {
+            Console.WriteLine("Склад:");
             foreach (var product in WareHouseD)
             {
                 Console.WriteLine($"Товар: {product.Key}, количество: {product.Value.Item2}, цена: {product.Value.Item1.Cost}");

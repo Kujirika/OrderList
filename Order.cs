@@ -13,22 +13,30 @@ namespace OrderInShop
 
         public Order(WareHouse wareHouse)
         {
-            _wareHouse = wareHouse; // Принимаем ссылку на склад, чтобы использовать методы класса WareHouse
+            _wareHouse = wareHouse; // Принимаем ссылку на склад, чтобы использовать методы класса WareHouse.
         }
 
-        public void AddProduct(string name, Product product, int count)
+        public void AddProduct(Product product, int count)
         {
-            if (String.IsNullOrEmpty(name) || name.Length < 2)
-                throw new ArgumentException("Некорректное название");
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
 
-            if (_orderList.ContainsKey(name))
+            count = count == 0 ? 1 : count; //Если при добавлении в коризу не указано кол-во, то добавляем с 1шт.
+
+            if (_orderList.TryGetValue(product.Name, out (Product product, int count) value)) // Проверка на наличие товара в корзине.
             {
-                _orderList[name] = (product, count);
+                if (_wareHouse.HasEnoughProduct(product, count, out int сountProduct)) // Проверка на наличие нужного кол-ва на складе.
+                {
+                    _orderList[product.Name] = (value.product, сountProduct); // Изменение кол-ва товара в корзине.
+                }
             }
-            else
-                _orderList.Add(name, (product, count));
+            else // Если товара еще нет в корзине.
+            {
+                if (_wareHouse.HasEnoughProduct(product, count, out int сountProduct)) // Проверка на наличие нужного кол-ва на складе.
+                {
+                    _orderList.Add(product.Name, (product, сountProduct)); // Добавление товара в корзину.
+                }
+            }
         }
 
         public void Amount()
@@ -46,20 +54,20 @@ namespace OrderInShop
 
         public void AddCount(Product product) 
         {
-            _orderList.TryGetValue(product.Name, out (Product product, int count) value); // По идее товар уже в корзине, иначе методы не доступны пользователю
+            _orderList.TryGetValue(product.Name, out (Product product, int count) value); // По идее товар уже в корзине, иначе метод не доступны пользователю
 
             if (_wareHouse.HasEnoughProduct(product, value.count + 1, out int сountProduct)) // Проверка на наличие нужного кол-ва на складе
             {
                 _orderList[product.Name] = (value.product, сountProduct); // Изменение кол-ва товара в корзине.
             }
-            // else недостаточно товара на складе
+            // else недостаточно товара на складе UI уведомление.
         }
 
-        public void RemoveCount(Product product)
+        public void RemoveCount(Product product) // По идее товар уже в корзине, иначе метод не доступны пользователю
         {
-            _orderList.TryGetValue(product.Name, out (Product product, int count) value); // По идее товар уже в корзине, иначе методы не доступны пользователю
+            _orderList.TryGetValue(product.Name, out (Product product, int count) value); 
 
-            if (value.count - 1 == 0)// Удаление товара из списка корзины, если кол-во товара = 0.
+            if (value.count - 1 <= 0) // Удаление товара из списка корзины, если кол-во товара = 0.
             {
                 _orderList.Remove(product.Name);
             }
@@ -67,34 +75,33 @@ namespace OrderInShop
                 _orderList[product.Name] = (value.product, value.count - 1); // Изменение кол-ва товара в корзине.   
         }
 
-        public void SetCount(Product product, int count)
+        public void SetCount(Product product, int count) // По идее товар уже в корзине, иначе метод не доступны пользователю
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
-            if (_orderList.TryGetValue(product.Name, out (Product product, int count) value)) // Проверка на наличие товара в корзине.
+
+        _orderList.TryGetValue(product.Name, out (Product product, int count) value); 
+
+        if (count == 0) // Удаление товара из списка корзины, если кол-во товара = 0.
+        {
+            _orderList.Remove(product.Name);
+        }
+        else
+        {
+            if (_wareHouse.HasEnoughProduct(product, count, out int сountProduct)) // Проверка на наличие нужного кол-ва на складе
             {
-                if (count == 0)// Удаление товара из списка корзины, если кол-во товара = 0.
-                {
-                    _orderList.Remove(product.Name); 
-                }
-                else
-                {
-                    if (_wareHouse.HasEnoughProduct(product, count, out int сountProduct)) // Проверка на наличие нужного кол-ва на складе
-                    {
-                        _orderList[product.Name] = (value.product, сountProduct); // Изменение кол-ва товара в корзине.
-                    }
-                    // else недостаточно товара на складе
-                }
+                _orderList[product.Name] = (value.product, сountProduct); // Изменение кол-ва товара в корзине.
             }
-            else
-                throw new ArgumentException("Товара не существует в корзине");
+            // else недостаточно товара на складе UI уведомление.
+        }
         }
 
         public void Print()
         {
+            Console.WriteLine("Корзина:");
             foreach (var product in _orderList)
             {
-                Console.WriteLine(product);
+                Console.WriteLine($"Товар - {product.Key}, кол-во - {product.Value.Item2}");
             }
         }
     }
