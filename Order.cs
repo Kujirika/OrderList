@@ -56,23 +56,14 @@ namespace OrderInShop
         {
             _orderList.TryGetValue(product.Name, out (Product product, int count) value); // По идее товар уже в корзине, иначе метод не доступны пользователю
 
-            if (_wareHouse.HasEnoughProduct(product, value.count + 1, out int сountProduct)) // Проверка на наличие нужного кол-ва на складе
-            {
-                _orderList[product.Name] = (value.product, сountProduct); // Изменение кол-ва товара в корзине.
-            }
-            // else недостаточно товара на складе UI уведомление.
+            SetCount(product, value.count + 1);
         }
 
         public void RemoveCount(Product product) // По идее товар уже в корзине, иначе метод не доступны пользователю
         {
-            _orderList.TryGetValue(product.Name, out (Product product, int count) value); 
+            _orderList.TryGetValue(product.Name, out (Product product, int count) value);
 
-            if (value.count - 1 <= 0) // Удаление товара из списка корзины, если кол-во товара = 0.
-            {
-                _orderList.Remove(product.Name);
-            }
-            else
-                _orderList[product.Name] = (value.product, value.count - 1); // Изменение кол-ва товара в корзине.   
+            SetCount(product, value.count - 1);
         }
 
         public void SetCount(Product product, int count) // По идее товар уже в корзине, иначе метод не доступны пользователю
