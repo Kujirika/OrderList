@@ -50,14 +50,21 @@ namespace OrderInShop
                 return false; //Товара нет на складе
         }
 
-        public bool HasEnoughProduct(Product product, int count)
+        public bool HasEnoughProduct(Product product, int count, out int сountProduct)
         {
             if (WareHouseD.TryGetValue(product.Name, out (Product product, int count) value))
             {
                 if (value.count >= count)
+                {
+                    сountProduct = count;
                     return true;
+                }
                 else
+                {
+                    //Вывод сообщения, что продуктов недостаточно и выдаем максимально доступное число.
+                    сountProduct = value.count;
                     return false;
+                }
             }
             else
                 throw new ArgumentException("Товара не существует");
