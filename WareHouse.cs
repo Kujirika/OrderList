@@ -67,7 +67,7 @@ namespace OrderInShop
 
         public void Print()
         {
-            Console.WriteLine("Склад:");
+            Console.Write("Склад: ");
             foreach (var product in WareHouseD)
             {
                 Console.WriteLine($"Товар: {product.Key}, количество: {product.Value.Item2}, цена: {product.Value.Item1.Cost}");

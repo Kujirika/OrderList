@@ -43,13 +43,16 @@ namespace OrderInShop
         {
             int sum = 0;
 
-            foreach (var item in _orderList)
+            if (_orderList.Count > 0)
             {
-                Product product = item.Value.Item1;
-                int count = item.Value.Item2;
-                sum += product.Cost * count;
+                foreach (var item in _orderList)
+                {
+                    sum += item.Value.Item1.Cost * item.Value.Item2;
+                }
+                Console.WriteLine($"Итого: {sum}р.");
             }
-            Console.WriteLine($"С вас: {sum}р.");
+            else
+                Console.WriteLine("Итого: Корзина пуста");
         }
 
         public void AddCount(Product product) 
@@ -89,10 +92,9 @@ namespace OrderInShop
 
         public void Print()
         {
-            Console.WriteLine("Корзина:");
             foreach (var product in _orderList)
             {
-                Console.WriteLine($"Товар - {product.Key}, кол-во - {product.Value.Item2}");
+                Console.WriteLine($"Корзина: Товар - {product.Key}, кол-во - {product.Value.Item2}");
             }
         }
     }

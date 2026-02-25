@@ -8,10 +8,13 @@ YKT_WareHouse.AddProduct(banana, 100);
 YKT_WareHouse.Print();
 
 Viktor.AddProduct(banana, 110);
+
+Viktor.Amount();
 Viktor.Print();
 Viktor.AddCount(banana);
 Viktor.Print();
 Viktor.RemoveCount(banana);
+Viktor.Amount();
 Viktor.Print();
 Viktor.SetCount(banana, 0);
 Viktor.Print();
@@ -19,3 +22,5 @@ Viktor.SetCount(banana, 1);
 Viktor.Print();
 Viktor.RemoveCount(banana);
 Viktor.Print();
+Viktor.Amount();
+
