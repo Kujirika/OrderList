@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Pipelines;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OrderInShop
+﻿namespace OrderInShop
 {
     internal class WareHouse
     {
@@ -48,7 +40,7 @@ namespace OrderInShop
 
             value.SetCount(count);
 
-            if(value.Count == 0)
+            if (value.Count == 0)
                 WareHouseD.Remove(item.Id);
         }
 
@@ -65,10 +57,32 @@ namespace OrderInShop
             if (!WareHouseD.TryGetValue(item.Id, out OrderItem value))
                 throw new ArgumentException("Товара не существует на складе");
 
-                if (value.Count >= count)
-                    return true;
-                else
-                    return false;
+            if (value.Count >= count)
+                return true;
+            else
+            {
+                Console.WriteLine($"На складе {value.Count}шт");
+                return false;
+            }
+        }
+
+        public bool CanReserveProduct(OrderItem ordItem)
+        {
+            //WareHouseD.TryGetValue(id, out OrderItem value); //Это если id передавать. Как читабельнее в итоге?
+            WareHouseD.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
+
+            if (ordItem.Count <= wareHouse.Count)
+                return true;
+            else
+                return false;
+        }
+
+        public void ReserveProduct(OrderItem ordItem)
+        {
+            WareHouseD.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
+
+            wareHouse.SetCount(WareHouseD.Count - ordItem.Count);
+
         }
 
         public void Print()
@@ -78,6 +92,6 @@ namespace OrderInShop
             {
                 Console.WriteLine($"Товар: {item.Value.Item.Name}, количество: {item.Value.Count}, цена: {item.Value.Item.Cost}");
             }
-        }  
+        }
     }
 }

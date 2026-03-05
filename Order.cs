@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OrderInShop
+﻿namespace OrderInShop
 {
     internal class Order
     {
@@ -28,7 +22,7 @@ namespace OrderInShop
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
             if (!_wareHouse.HasEnoughProduct(item, count)) // Проверка на наличие достаточного кол-ва на складе.
-                throw new ArgumentException("Недостаточно товара на складе");
+                throw new ArgumentException("Недостаточно товара на складе"); //TODO выдача кол-ва которое есть на складе.
 
             if (_orderList.TryGetValue(item.Id, out OrderItem value)) // Проверка на наличие товара в корзине.
             {
@@ -57,7 +51,7 @@ namespace OrderInShop
                 Console.WriteLine("Итого: Корзина пуста");
         }
 
-        public void AddCount(Item item) 
+        public void AddCount(Item item)
         {
             _orderList.TryGetValue(item.Id, out OrderItem value);
             value.Increase();
@@ -89,6 +83,21 @@ namespace OrderInShop
             {
                 Console.WriteLine($"Корзина: Товар - {product.Value.Item.Name}, кол-во - {product.Value.Count}");
             }
+        }
+
+        public void Pay()
+        {
+            foreach (var item in _orderList)
+            {
+                if (!_wareHouse.CanReserveProduct(item.Value))
+                {
+                    Console.WriteLine("Недостаточно продуктов на складе");
+                    return;
+                }
+                else
+                    _wareHouse.ReserveProduct(item.Value);
+            }
+            Amount();
         }
     }
 }
