@@ -82,7 +82,6 @@
             WareHouseD.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
 
             wareHouse.SetCount(WareHouseD.Count - ordItem.Count);
-
         }
 
         public void Print()

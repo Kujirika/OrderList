@@ -94,8 +94,12 @@
                     Console.WriteLine("Недостаточно продуктов на складе");
                     return;
                 }
-                else
-                    _wareHouse.ReserveProduct(item.Value);
+            }
+
+            //Резервирование после проверки, что каждого вида товара хватает на складе.
+            foreach (var item in _orderList)
+            {
+                _wareHouse.ReserveProduct(item.Value);
             }
             Amount();
         }
