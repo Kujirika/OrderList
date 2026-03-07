@@ -17,6 +17,11 @@
             get { return _id; }
         }
 
+        public void OrderCreate(WareHouse orderWareHouse)
+        {
+            Order order = new(orderWareHouse);
+        }
+
         public void OrderList(out Dictionary<Guid, OrderItem> list)
         {
             list = _orderList;

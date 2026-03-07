@@ -15,9 +15,7 @@ namespace OrderInShop
         // Создание заказа. Передача ссылки на склад с которым взаимодействуем.
         public void OrderCreate(WareHouse orderWareHouse)
         {
-            _orderWareHouse = orderWareHouse;
-            Order order = new(_orderWareHouse);
-            _order = order;
+            _order.OrderCreate(orderWareHouse);
         }
         // Добавление товара в заказ.
         public void OrderIncreaseQuantity(Item item) => OrderSetQuantity(item, 1); // В UI это "+"
@@ -40,11 +38,6 @@ namespace OrderInShop
 
                 _order.SetCount(item, count);
             }
-        }
-
-        public void OrderPrint()
-        {
-            _order.Print();
         }
 
         // Оплата.
