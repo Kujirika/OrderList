@@ -17,22 +17,27 @@
             get { return _id; }
         }
 
+        public void OrderList(out Dictionary<Guid, OrderItem> list)
+        {
+            list = _orderList;
+        }
+
+        public bool HasProduct(Item item)
+        {
+            if (_orderList.ContainsKey(item.Id))
+                return true;
+            else
+                return false; //Товара нет в корзине
+        }
+
         public void AddProduct(Item item, int count)
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
-            if (!_wareHouse.HasEnoughProduct(item, count)) // Проверка на наличие достаточного кол-ва на складе.
-                throw new ArgumentException("Недостаточно товара на складе"); //TODO выдача кол-ва которое есть на складе.
 
-            if (_orderList.TryGetValue(item.Id, out OrderItem value)) // Проверка на наличие товара в корзине.
-            {
-                value.SetCount(count); // Изменение кол-ва товара в корзине.
-            }
-            else // Если товара еще нет в корзине.
-            {
-                OrderItem orderItem = new(item, count);
-                _orderList.Add(item.Id, orderItem); // Добавление товара в корзину.
-            }
+            OrderItem orderItem = new(item, count); //Объединение товара и кол-ва в одну сущность.
+            _orderList.Add(item.Id, orderItem); // Добавление товара в корзину.
+
         }
 
         public void Amount()
@@ -51,29 +56,27 @@
                 Console.WriteLine("Итого: Корзина пуста");
         }
 
-        public void AddCount(Item item)
+        public void AddCount(Item item) // TODO возможно не нужен уже
         {
-            _orderList.TryGetValue(item.Id, out OrderItem value);
-            value.Increase();
+            _orderList.TryGetValue(item.Id, out OrderItem ordItem);
+            ordItem.Increase();
         }
 
-        public void RemoveCount(Item item)
+        public void RemoveCount(Item item) // TODO возможно не нужен уже
         {
-            _orderList.TryGetValue(item.Id, out OrderItem value);
-            value.Decrease();
+            _orderList.TryGetValue(item.Id, out OrderItem ordItem);
+            ordItem.Decrease();
         }
 
-        public void SetCount(Item item, int count) // По идее товар уже в корзине, иначе метод не доступны пользователю
+        public void SetCount(Item item, int count) // По идее товар уже в корзине, иначе метод не доступен пользователю в UI.
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
-            if (!_orderList.TryGetValue(item.Id, out OrderItem value))
-                throw new ArgumentException("Товара нет в корзине");
 
-            if (_wareHouse.HasEnoughProduct(item, count)) // Проверка на наличие нужного кол-ва на складе
-                value.SetCount(count);
+            _orderList.TryGetValue(item.Id, out OrderItem ordItem);
+            ordItem.SetCount(count); 
 
-            if (value.Count == 0)
+            if (ordItem.Count == 0)
                 _orderList.Remove(item.Id);
         }
 
@@ -83,25 +86,6 @@
             {
                 Console.WriteLine($"Корзина: Товар - {product.Value.Item.Name}, кол-во - {product.Value.Count}");
             }
-        }
-
-        public void Pay()
-        {
-            foreach (var item in _orderList)
-            {
-                if (!_wareHouse.CanReserveProduct(item.Value))
-                {
-                    Console.WriteLine("Недостаточно продуктов на складе");
-                    return;
-                }
-            }
-
-            //Резервирование после проверки, что каждого вида товара хватает на складе.
-            foreach (var item in _orderList)
-            {
-                _wareHouse.ReserveProduct(item.Value);
-            }
-            Amount();
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Linq;
-
-namespace OrderInShop
+﻿namespace OrderInShop
 {
     internal class OrderItem
     {
@@ -15,7 +10,7 @@ namespace OrderInShop
             get { return _item; }
         }
         public int Count
-        { 
+        {
             get { return _count; }
         }
 
