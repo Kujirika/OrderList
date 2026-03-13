@@ -1,4 +1,7 @@
-﻿namespace OrderInShop
+﻿using System.Runtime.Serialization.Json;
+using System.Text.Json;
+
+namespace OrderInShop
 {
     internal class WareHouse
     {
@@ -82,6 +85,22 @@
             _wareHouseD.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
 
             wareHouse.SetCount(_wareHouseD.Count - ordItem.Count);
+        }
+
+        public void Save()
+        {
+             var jsonDict = new Dictionary<Guid, int> ();
+
+            foreach (var item in _wareHouseD)
+            {
+                jsonDict.Add(item.Key, item.Value.Count);
+            }
+
+            string json = JsonSerializer.Serialize(jsonDict);
+        }
+        public void Load()
+        { 
+            
         }
 
         public void Print()

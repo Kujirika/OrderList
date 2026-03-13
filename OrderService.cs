@@ -10,14 +10,13 @@ namespace OrderInShop
         // Получается нужно тут делать свой список заказов. Уник ID для заказов. Так как пользователь не всегда регается для заказа.
         private Guid _orderId;
         private Dictionary<Guid, Order> OrderDictionary = new();
-        
 
-        // Создание заказа. Передача ссылки на склад с которым взаимодействуем.
-        public void OrderCreate(WareHouse orderWareHouse)
+        public OrderService(WareHouse wareHouse, Order order)
         {
-            _order.OrderCreate(orderWareHouse);
+            _orderWareHouse = wareHouse;
+            _order = order;
         }
-        // Добавление товара в заказ.
+
         public void OrderIncreaseQuantity(Item item) => OrderSetQuantity(item, 1); // В UI это "+"
 
         public void OrderDecreaseQuantity(Item item) => OrderSetQuantity(item, -1); // В UI это "-" //TODO исключение "-1", мб OrderItem использовать
