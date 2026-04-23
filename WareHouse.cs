@@ -1,5 +1,7 @@
 ﻿using System.Runtime.Serialization.Json;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace OrderInShop
 {
@@ -71,7 +73,6 @@ namespace OrderInShop
 
         public bool CanReserveProduct(OrderItem ordItem)
         {
-            //WareHouseD.TryGetValue(id, out OrderItem value); //Это если id передавать. Как читабельнее и правильнее в итоге?
             _wareHouseD.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
 
             if (ordItem.Count <= wareHouse.Count)
@@ -89,14 +90,21 @@ namespace OrderInShop
 
         public void Save()
         {
-             var jsonDict = new Dictionary<Guid, int> ();
+            string projectPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)
+                        .Parent.Parent.Parent.FullName; // поднимаемся из bin/Debug/net8.0/
 
-            foreach (var item in _wareHouseD)
+            // Создаём полный путь к файлу
+            string path = Path.Combine(projectPath, "wareHouse.json");
+
+            var jsonDict = new Dictionary<Guid, OrderItem>(_wareHouseD); // создаем переменную в которую копируем словарь товаров на складе
+
+            string json = JsonSerializer.Serialize(jsonDict, new JsonSerializerOptions
             {
-                jsonDict.Add(item.Key, item.Value.Count);
-            }
+                WriteIndented = true, // чтобы JSON был красивым, с отступами
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic)
+            });
 
-            string json = JsonSerializer.Serialize(jsonDict);
+            File.WriteAllText(path, json);
         }
         public void Load()
         { 

@@ -1,0 +1,26 @@
+{
+  "f107b16d-c9a0-4c71-b616-48e2eb2fd891": {
+    "Item": {
+      "Name": "Банан",
+      "Cost": 1,
+      "Id": "f107b16d-c9a0-4c71-b616-48e2eb2fd891"
+    },
+    "Count": 100
+  },
+  "23361bc2-8def-494d-a502-2e285f03a320": {
+    "Item": {
+      "Name": "вишня",
+      "Cost": 2,
+      "Id": "23361bc2-8def-494d-a502-2e285f03a320"
+    },
+    "Count": 50
+  },
+  "6e7797db-78eb-4103-b507-eba7a8e0eebe": {
+    "Item": {
+      "Name": "груша",
+      "Cost": 3,
+      "Id": "6e7797db-78eb-4103-b507-eba7a8e0eebe"
+    },
+    "Count": 150
+  }
+}
