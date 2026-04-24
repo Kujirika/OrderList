@@ -3,7 +3,7 @@
 Item banana = new("Банан", 1);// Создание продукта
 Item cherry = new("вишня", 2);// Создание продукта
 Item pear = new("груша", 3);// Создание продукта
-WareHouse wareHouse = new();// Создание склада
+WareHouse wareHouse = new("Ekb");// Создание склада
 Order viktor = new(wareHouse);
 OrderService vik = new(wareHouse, viktor);
 

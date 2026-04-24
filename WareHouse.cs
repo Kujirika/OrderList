@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization.Json;
+﻿using System.Net.WebSockets;
+using System.Runtime.Serialization.Json;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -8,6 +9,18 @@ namespace OrderInShop
     internal class WareHouse
     {
         private Dictionary<Guid, OrderItem> _wareHouseD = new();
+        private string _wareHouseName;
+
+        static string projectPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName; // поднимаемся из bin/Debug/net8.0/
+
+        public WareHouse(string wareHouseName) 
+        {
+            if (string.IsNullOrEmpty(wareHouseName) || wareHouseName.Length < 3)
+                throw new Exception("Неверное имя склада");
+
+            _wareHouseName = wareHouseName;
+        }
+
         public void AddItem(Item item, int count)
         {
             if (_wareHouseD.TryGetValue(item.Id, out OrderItem value))
@@ -90,15 +103,13 @@ namespace OrderInShop
 
         public void Save()
         {
-            string projectPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)
-                        .Parent.Parent.Parent.FullName; // поднимаемся из bin/Debug/net8.0/
 
-            // Создаём полный путь к файлу
-            string path = Path.Combine(projectPath, "wareHouse.json");
+            string fileName = string.Concat(_wareHouseName + "WareHouse.json");
+            string path = Path.Combine(projectPath, fileName);
 
-            var jsonDict = new Dictionary<Guid, OrderItem>(_wareHouseD); // создаем переменную в которую копируем словарь товаров на складе
+            Console.WriteLine($"File name = {fileName}, path = {path}");
 
-            string json = JsonSerializer.Serialize(jsonDict, new JsonSerializerOptions
+            string json = JsonSerializer.Serialize(_wareHouseD, new JsonSerializerOptions
             {
                 WriteIndented = true, // чтобы JSON был красивым, с отступами
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic)
@@ -107,8 +118,18 @@ namespace OrderInShop
             File.WriteAllText(path, json);
         }
         public void Load()
-        { 
-            
+        {
+            string path = Path.Combine(projectPath, "wareHouse.json");
+
+            string json = File.ReadAllText(path);
+            var jsonRead = JsonSerializer.Deserialize<Dictionary<Guid, OrderItem>>(json);
+            if (jsonRead != null)
+            {
+                foreach (var item in jsonRead)
+                {
+                    _wareHouseD = jsonRead;
+                }
+            }
         }
 
         public void Print()
