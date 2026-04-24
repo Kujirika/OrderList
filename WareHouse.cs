@@ -125,10 +125,7 @@ namespace OrderInShop
             var jsonRead = JsonSerializer.Deserialize<Dictionary<Guid, OrderItem>>(json);
             if (jsonRead != null)
             {
-                foreach (var item in jsonRead)
-                {
-                    _wareHouseD = jsonRead;
-                }
+                _wareHouseD = jsonRead;
             }
         }
 
