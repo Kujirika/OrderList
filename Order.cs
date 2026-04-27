@@ -4,12 +4,18 @@
     {
         private Dictionary<Guid, OrderItem> _orderList = new();
 
-        private WareHouse _wareHouse;
         private Guid _id;
 
-        public Order(WareHouse wareHouse)
+        private Guid _wareHouseId;
+
+        public Guid WareHouseId
         {
-            _wareHouse = wareHouse; // Принимаем ссылку на склад, чтобы использовать методы класса WareHouse.
+            get { return _wareHouseId; }
+        }
+
+        public Order(Guid wareHouseId)
+        {
+            _wareHouseId = wareHouseId;
             _id = Guid.NewGuid();
         }
         public Guid Id
@@ -17,17 +23,13 @@
             get { return _id; }
         }
 
-        public void OrderCreate(WareHouse orderWareHouse)
-        {
-            Order order = new(orderWareHouse);
-        }
 
-        public void OrderList(out Dictionary<Guid, OrderItem> list)
+        public void GetOrderList(out Dictionary<Guid, OrderItem> list)
         {
             list = _orderList;
         }
 
-        public bool HasProduct(Item item)
+        public bool HasItem(Item item)
         {
             if (_orderList.ContainsKey(item.Id))
                 return true;
@@ -35,7 +37,7 @@
                 return false; //Товара нет в корзине
         }
 
-        public void AddProduct(Item item, int count)
+        public void AddItem(Item item, int count)
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
@@ -73,23 +75,23 @@
             ordItem.Decrease();
         }
 
-        public void SetCount(Item item, int count) // По идее товар уже в корзине, иначе метод не доступен пользователю в UI.
+        public void SetCount(Item item, int count)
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
 
-            _orderList.TryGetValue(item.Id, out OrderItem ordItem);
-            ordItem.SetCount(count); 
+            _orderList.TryGetValue(item.Id, out OrderItem orderItem); 
+            orderItem.SetCount(count); 
 
-            if (ordItem.Count == 0)
+            if (orderItem.Count == 0)
                 _orderList.Remove(item.Id);
         }
 
         public void Print()
         {
-            foreach (var product in _orderList)
+            foreach (var item in _orderList)
             {
-                Console.WriteLine($"Корзина: Товар - {product.Value.Item.Name}, кол-во - {product.Value.Count}");
+                Console.WriteLine($"Корзина:\nТовар - {item.Value.Item.Name}, кол-во - {item.Value.Count}");
             }
         }
     }
