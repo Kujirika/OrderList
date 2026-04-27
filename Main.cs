@@ -1,28 +1,27 @@
 ﻿using OrderInShop;
 
-Item banana = new("Банан", 1);// Создание продукта
-Item cherry = new("вишня", 2);// Создание продукта
-Item pear = new("груша", 3);// Создание продукта
-WareHouse wareHouse = new("Ekb");// Создание склада
-Order viktor = new(wareHouse);
-OrderService vik = new(wareHouse, viktor);
+// Создание продуктов
+Item banana = new("Банан", 1);
+Item cherry = new("вишня", 2);
+Item pear = new("груша", 3);
 
 
-wareHouse.AddItem(banana, 100);
-wareHouse.AddItem(cherry, 50);
-wareHouse.AddItem(pear, 150);
+
+//Заполнение склада
+
+
+OrderService orderService = new OrderService();// Создаём сервис, чтобы можно было использовать его функционал
+
+var wareHouse = orderService.CreateNewWareHouse("Ekb");
+
+wareHouse.AddItem(pear, 110);
+wareHouse.AddItem(cherry, 11);
+wareHouse.AddItem(banana, 1);
+
+var order = orderService.CreateNewOrder(wareHouse.Id);// Создаем заказ через OrderService
+
 wareHouse.Print();
 
-wareHouse.Save();
+orderService.SetItemQuantity(order,pear, 100);
 
-vik.OrderSetQuantity(banana, 90);
-vik.OrderSetQuantity(cherry, 40);
-vik.OrderSetQuantity(pear, 111);
-
-wareHouse.Save();
-
-vik.OrderPay();
-
-
-
-
+order.Print();
