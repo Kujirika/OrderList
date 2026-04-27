@@ -27,18 +27,18 @@ namespace OrderInShop
 
         public void SetItemQuantity(Order order, Item item, int count) // В UI это поле для ввода между "+" и "-" или вызов при выборе товара в каталоге.(сделать два разным метода? в будущем)
         {
-            var wareHouse = GetWareHouseByOrder(order);
+            var wareHouseId = GetWareHouseByOrder(order);
 
             if (!order.HasItem(item)) // Проверка на наличие товара в корзине
             {
-                if (!wareHouse.HasEnoughItem(item, count)) // Проверка на наличие достаточного кол-ва на складе. 
+                if (!wareHouseId.HasEnoughItem(item, count)) // Проверка на наличие достаточного кол-ва на складе. 
                     throw new ArgumentException("Недостаточно товара на складе"); //TODO выдача кол-ва которое есть на складе, вместо Exception
 
                 order.AddItem(item, count);
             }
             else  // Товар есть в корзине
             {
-                if (!wareHouse.HasEnoughItem(item, count)) // Проверка на наличие достаточного кол-ва на складе. 
+                if (!wareHouseId.HasEnoughItem(item, count)) // Проверка на наличие достаточного кол-ва на складе. 
                     throw new ArgumentException("Недостаточно товара на складе"); //TODO выдача кол-ва которое есть на складе, вместо Exception
 
                 order.SetCount(item, count);
@@ -48,19 +48,19 @@ namespace OrderInShop
         // Оплата.
         public void OrderPay(Order order)
         {
-            var wareHouse = GetWareHouseByOrder(order);
+            var wareHouseId = GetWareHouseByOrder(order);
 
             order.GetOrderList(out var OrderList); // Делаем копию списка корзины.
 
             foreach (var item in OrderList) // Проверяем, что товара хватает на складе
             {
-                if (!wareHouse.CanReserveItem(item.Value))
+                if (!wareHouseId.CanReserveItem(item.Value))
                     throw new ArgumentException("Недостаточно продуктов на складе");
             }
             
             foreach (var item in OrderList) // Резервирование после проверки, что каждого вида товара хватает на складе. 
             {
-                wareHouse.ReserveItem(item.Value);
+                wareHouseId.ReserveItem(item.Value);
                 // Надо реализовать резервацию на 10 минут.
             }
         }
