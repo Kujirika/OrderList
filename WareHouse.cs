@@ -8,8 +8,15 @@ namespace OrderInShop
 {
     internal class WareHouse
     {
-        private Dictionary<Guid, OrderItem> _wareHouseD = new();
+
+        private Dictionary<Guid, OrderItem> _wareHouseDict = new();
         private string _wareHouseName;
+        private Guid _id;
+
+        public Guid Id
+        {
+            get { return _id; }
+        }
 
         static string projectPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName; // поднимаемся из bin/Debug/net8.0/
 
@@ -19,26 +26,27 @@ namespace OrderInShop
                 throw new Exception("Неверное имя склада");
 
             _wareHouseName = wareHouseName;
+            _id = Guid.NewGuid();
         }
 
         public void AddItem(Item item, int count)
         {
-            if (_wareHouseD.TryGetValue(item.Id, out OrderItem value))
+            if (_wareHouseDict.TryGetValue(item.Id, out OrderItem value))
             {
                 value.SetCount(value.Count + count); // Увеличение кол-ва  товара на складе.
             }
             else
             {
                 OrderItem orderItem = new(item, count);
-                _wareHouseD.Add(item.Id, orderItem); // Добавление товара на склад
+                _wareHouseDict.Add(item.Id, orderItem); // Добавление товара на склад
             }
         }
 
-        public void RemoveProduct(Item item, int count)
+        public void RemoveItem(Item item, int count)
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
-            if (!_wareHouseD.TryGetValue(item.Id, out OrderItem value))
+            if (!_wareHouseDict.TryGetValue(item.Id, out OrderItem value))
                 throw new ArgumentException("Товара не существует на складе");
             if (value.Count - count < 0)
                 throw new ArgumentException("На складе нет такого количества продуктов");
@@ -46,33 +54,33 @@ namespace OrderInShop
             value.SetCount(value.Count - count);
 
             if (value.Count == 0)
-                _wareHouseD.Remove(item.Id);
+                _wareHouseDict.Remove(item.Id);
         }
 
         public void SetCount(Item item, int count)
         {
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
-            if (!_wareHouseD.TryGetValue(item.Id, out OrderItem value))
+            if (!_wareHouseDict.TryGetValue(item.Id, out OrderItem value))
                 throw new ArgumentException("Товара не существует на складе");
 
             value.SetCount(count);
 
             if (value.Count == 0)
-                _wareHouseD.Remove(item.Id);
+                _wareHouseDict.Remove(item.Id);
         }
 
-        public bool HasProduct(Item item)
+        public bool HasItem(Item item)
         {
-            if (_wareHouseD.ContainsKey(item.Id))
+            if (_wareHouseDict.ContainsKey(item.Id))
                 return true;
             else
                 return false; //Товара нет на складе
         }
 
-        public bool HasEnoughProduct(Item item, int count)
+        public bool HasEnoughItem(Item item, int count)
         {
-            if (!_wareHouseD.TryGetValue(item.Id, out OrderItem value))
+            if (!_wareHouseDict.TryGetValue(item.Id, out OrderItem value))
                 throw new ArgumentException("Товара не существует на складе");
 
             if (value.Count >= count)
@@ -84,9 +92,9 @@ namespace OrderInShop
             }
         }
 
-        public bool CanReserveProduct(OrderItem ordItem)
+        public bool CanReserveItem(OrderItem ordItem)
         {
-            _wareHouseD.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
+            _wareHouseDict.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
 
             if (ordItem.Count <= wareHouse.Count)
                 return true;
@@ -94,11 +102,11 @@ namespace OrderInShop
                 return false;
         }
 
-        public void ReserveProduct(OrderItem ordItem)
+        public void ReserveItem(OrderItem ordItem)
         {
-            _wareHouseD.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
+            _wareHouseDict.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
 
-            wareHouse.SetCount(_wareHouseD.Count - ordItem.Count);
+            wareHouse.SetCount(_wareHouseDict.Count - ordItem.Count);
         }
 
         public void Save()
@@ -109,7 +117,7 @@ namespace OrderInShop
 
             Console.WriteLine($"File name = {fileName}, path = {path}");
 
-            string json = JsonSerializer.Serialize(_wareHouseD, new JsonSerializerOptions
+            string json = JsonSerializer.Serialize(_wareHouseDict, new JsonSerializerOptions
             {
                 WriteIndented = true, // чтобы JSON был красивым, с отступами
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic)
@@ -125,14 +133,14 @@ namespace OrderInShop
             var jsonRead = JsonSerializer.Deserialize<Dictionary<Guid, OrderItem>>(json);
             if (jsonRead != null)
             {
-                _wareHouseD = jsonRead;
+                _wareHouseDict = jsonRead;
             }
         }
 
         public void Print()
         {
-            Console.Write("Склад: ");
-            foreach (var item in _wareHouseD)
+            Console.WriteLine("Склад: ");
+            foreach (var item in _wareHouseDict)
             {
                 Console.WriteLine($"Товар: {item.Value.Item.Name}, количество: {item.Value.Count}, цена: {item.Value.Item.Cost}");
             }
