@@ -106,7 +106,7 @@ namespace OrderInShop
         {
             _wareHouseDict.TryGetValue(ordItem.Item.Id, out OrderItem wareHouse);
 
-            wareHouse.SetCount(_wareHouseDict.Count - ordItem.Count);
+            wareHouse.SetCount(wareHouse.Count - ordItem.Count);
         }
 
         public void Save()
