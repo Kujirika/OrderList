@@ -7,6 +7,17 @@
         private Guid _id;
 
         private Guid _wareHouseId;
+        public enum Status
+        {
+            Created,
+            Paid,
+            Cancelled
+        }
+        private Status _orderStatus;
+
+        public void MarkAsCreated() => _orderStatus = Status.Created;
+        public void MarkAsPaid() => _orderStatus = Status.Paid;
+        public void MarkAsCancelled() => _orderStatus = Status.Cancelled;
 
         public Guid WareHouseId
         {
@@ -17,6 +28,8 @@
         {
             _wareHouseId = wareHouseId;
             _id = Guid.NewGuid();
+
+            MarkAsCreated();
         }
         public Guid Id
         {

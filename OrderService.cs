@@ -63,6 +63,8 @@ namespace OrderInShop
                 wareHouseId.ReserveItem(item.Value);
                 // Надо реализовать резервацию на 10 минут.
             }
+
+            order.MarkAsPaid();
         }
         private WareHouse GetWareHouseByOrder(Order order)
         {
