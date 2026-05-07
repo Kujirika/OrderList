@@ -17,9 +17,31 @@
 
         public Status OrderStatus { get { return _orderStatus; } }
 
-        public void MarkAsCreated() => _orderStatus = Status.Created;
-        public void MarkAsPaid() => _orderStatus = Status.Paid;
-        public void MarkAsCancelled() => _orderStatus = Status.Cancelled;
+        private bool PaiedStatusCheck()
+        {
+            if (_orderStatus != Status.Paid)
+                return true;
+            else
+                throw new Exception("Заказ уже оплачен, изменение статуса невозможно");
+
+        }
+
+        public void MarkAsCreated()
+        {
+            if (PaiedStatusCheck())
+                _orderStatus = Status.Created;
+
+        }
+        public void MarkAsPaid()
+        {
+            if (PaiedStatusCheck())
+                _orderStatus = Status.Paid;
+        }
+        public void MarkAsCancelled()
+        {
+            if (PaiedStatusCheck())
+                _orderStatus = Status.Cancelled;
+        }
 
         public Guid WareHouseId
         {
@@ -95,8 +117,8 @@
             if (count < 0)
                 throw new ArgumentException("Количество не может быть отрицательным");
 
-            _orderList.TryGetValue(item.Id, out OrderItem orderItem); 
-            orderItem.SetCount(count); 
+            _orderList.TryGetValue(item.Id, out OrderItem orderItem);
+            orderItem.SetCount(count);
 
             if (orderItem.Count == 0)
                 _orderList.Remove(item.Id);
