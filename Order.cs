@@ -15,6 +15,8 @@
         }
         private Status _orderStatus;
 
+        public Status OrderStatus { get { return _orderStatus; } }
+
         public void MarkAsCreated() => _orderStatus = Status.Created;
         public void MarkAsPaid() => _orderStatus = Status.Paid;
         public void MarkAsCancelled() => _orderStatus = Status.Cancelled;

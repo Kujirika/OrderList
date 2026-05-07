@@ -48,6 +48,9 @@ namespace OrderInShop
         // Оплата.
         public void OrderPay(Order order)
         {
+            if (order.OrderStatus == Order.Status.Paid)
+                throw new Exception("Заказ уже оплачен");
+
             var wareHouseId = GetWareHouseByOrder(order);
 
             order.GetOrderList(out var OrderList); // Делаем копию списка корзины.
